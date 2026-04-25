@@ -1,0 +1,87 @@
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.pacingGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.pacingCard {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.pacingTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 4px;
+  gap: 8px;
+}
+
+.pacingName {
+  font-size: 11px;
+  color: var(--text2);
+  line-height: 1.4;
+  flex: 1;
+}
+
+.badgeActive {
+  background: rgba(76,175,130,0.15);
+  color: var(--green);
+  border-radius: 4px;
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.badgePaused {
+  background: var(--surface2);
+  color: var(--text3);
+  border-radius: 4px;
+  padding: 2px 7px;
+  font-size: 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.pacingSpend {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.pacingBarWrap {
+  background: var(--surface2);
+  border-radius: 3px;
+  height: 6px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.pacingBarFill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width .4s ease;
+}
+
+.pacingNotes {
+  font-size: 10px;
+  color: var(--text3);
+}
+
+@media (max-width: 900px) {
+  .kpiGrid   { grid-template-columns: repeat(2, 1fr); }
+  .pacingGrid { grid-template-columns: repeat(2, 1fr); }
+}

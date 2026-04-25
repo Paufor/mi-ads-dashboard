@@ -1,0 +1,68 @@
+.wrapper {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  overflow: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.th {
+  text-align: left;
+  padding: 10px 12px;
+  color: var(--text3);
+  font-weight: 400;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  border-bottom: 0.5px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+}
+
+.th:hover { color: var(--accent); }
+
+.arrow { opacity: .5; font-size: 10px; }
+
+.row td {
+  padding: 10px 12px;
+  border-bottom: 0.5px solid rgba(255,255,255,0.04);
+  color: var(--text2);
+}
+
+.row:last-child td { border-bottom: none; }
+.row:hover td { background: var(--surface2); }
+
+.nameCell {
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text) !important;
+}
+
+.statusActive {
+  background: rgba(76,175,130,0.15);
+  color: var(--green);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.statusPaused {
+  background: var(--surface2);
+  color: var(--text3);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
+.roasGood { color: var(--green) !important; font-weight: 500; }
+.roasOk   { color: var(--amber) !important; font-weight: 500; }
+.roasBad  { color: var(--red) !important;   font-weight: 500; }
+.roasNull { color: var(--text3) !important; }
