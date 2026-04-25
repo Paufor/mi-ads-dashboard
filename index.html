@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JYG Pro Fishing — Meta Ads Dashboard</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d0d0d;--sf:#161616;--sf2:#1a1a1a;--bd:rgba(255,255,255,0.07);--ac:#8d60ca;--ac2:rgba(141,96,202,0.13);--tx:#e0e0e0;--tx2:#999;--tx3:#555;--gr:#4caf82;--rd:#e05a5a;--am:#f0a830}
+html,body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;min-height:100vh}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+</style>
+</head>
+<body><div id="root"></div>
+<script type="text/babel">
+
+/* ═══════════════════════════════════════════
+   DATOS — edita estos bloques para actualizar
+   ═══════════════════════════════════════════ */
+
+const ACCOUNT = {
+  spend:945.31, impressions:116751, clicks:4708, ctr:4.03, cpc:0.20,
+  roas:8.67, purchases:121, revenue:8192.68, addToCart:1601,
+  initiateCheckout:293, landingPageViews:2366, viewContent:3021,
+  leads:246, videoViews:21547,
+}
+
+const DAILY = [
+  {d:'Mar 26',spend:33.80, imp:4462, clicks:47, ctr:1.05,cpc:0.72,purchases:3, atc:41, co:13},
+  {d:'Mar 27',spend:33.86, imp:4187, clicks:34, ctr:0.81,cpc:1.00,purchases:2, atc:59, co:10},
+  {d:'Mar 28',spend:28.81, imp:4395, clicks:38, ctr:0.86,cpc:0.76,purchases:4, atc:61, co:8},
+  {d:'Mar 29',spend:39.77, imp:5419, clicks:60, ctr:1.11,cpc:0.66,purchases:6, atc:150,co:23},
+  {d:'Mar 30',spend:1.94,  imp:252,  clicks:2,  ctr:0.79,cpc:0.97,purchases:2, atc:25, co:3},
+  {d:'Mar 31',spend:10.88, imp:1767, clicks:4,  ctr:0.23,cpc:2.72,purchases:4, atc:50, co:7},
+  {d:'Apr 01',spend:34.30, imp:5604, clicks:200,ctr:3.57,cpc:0.17,purchases:0, atc:25, co:6},
+  {d:'Apr 02',spend:37.94, imp:6886, clicks:172,ctr:2.50,cpc:0.22,purchases:1, atc:0,  co:1},
+  {d:'Apr 03',spend:36.65, imp:6146, clicks:125,ctr:2.03,cpc:0.29,purchases:2, atc:32, co:4},
+  {d:'Apr 04',spend:40.53, imp:6137, clicks:183,ctr:2.98,cpc:0.22,purchases:0, atc:0,  co:0},
+  {d:'Apr 05',spend:41.59, imp:6875, clicks:221,ctr:3.21,cpc:0.19,purchases:1, atc:10, co:2},
+  {d:'Apr 06',spend:6.97,  imp:1125, clicks:22, ctr:1.96,cpc:0.32,purchases:0, atc:0,  co:0},
+  {d:'Apr 18',spend:20.88, imp:1619, clicks:151,ctr:9.33,cpc:0.14,purchases:7, atc:61, co:19},
+  {d:'Apr 19',spend:45.82, imp:3770, clicks:314,ctr:8.33,cpc:0.15,purchases:6, atc:82, co:20},
+  {d:'Apr 20',spend:43.64, imp:4791, clicks:415,ctr:8.66,cpc:0.11,purchases:15,atc:181,co:34},
+  {d:'Apr 21',spend:67.63, imp:7006, clicks:435,ctr:6.21,cpc:0.16,purchases:17,atc:176,co:29},
+  {d:'Apr 22',spend:123.73,imp:13739,clicks:783,ctr:5.70,cpc:0.16,purchases:20,atc:243,co:46},
+  {d:'Apr 23',spend:175.93,imp:18765,clicks:995,ctr:5.30,cpc:0.18,purchases:18,atc:228,co:33},
+  {d:'Apr 24',spend:120.64,imp:13806,clicks:507,ctr:3.67,cpc:0.24,purchases:13,atc:177,co:35},
+]
+
+const CAMPAIGNS = [
+  {name:'SB 2026 Scale 1',           status:'ACTIVE', spend:147.38,imp:16940,ctr:6.62,cpc:0.131,purchases:20,roas:8.58},
+  {name:'Live Series Prospecting',   status:'ACTIVE', spend:148.86,imp:16083,ctr:1.82,cpc:0.510,purchases:16,roas:9.78},
+  {name:'SB 2026 Prospecting',       status:'ACTIVE', spend:302.03,imp:30473,ctr:7.17,cpc:0.138,purchases:60,roas:9.77},
+  {name:'Giveaway Eng (no flw)',     status:'PAUSED', spend:98.92, imp:19339,ctr:0.15,cpc:3.411,purchases:0, roas:null},
+  {name:'Giveaway IG Leads',         status:'PAUSED', spend:71.96, imp:9569, ctr:9.26,cpc:0.081,purchases:4, roas:2.96},
+  {name:'Giveaway Eng (flw)',        status:'PAUSED', spend:37.98, imp:5632, ctr:0.21,cpc:3.165,purchases:1, roas:4.47},
+  {name:'Live Series Manual Test',   status:'PAUSED', spend:138.18,imp:18715,ctr:0.97,cpc:0.763,purchases:20,roas:15.48},
+]
+
+const ADS = [
+  {name:'2 Producto',          spend:2.21,  imp:297,  ctr:1.68,purchases:1, roas:67.81},
+  {name:'3 Producto',          spend:10.28, imp:959,  ctr:2.19,purchases:4, roas:32.87},
+  {name:'5 Captura',           spend:10.27, imp:865,  ctr:1.39,purchases:2, roas:20.27},
+  {name:'V2 Fish Circus IG D', spend:34.34, imp:3551, ctr:8.45,purchases:12,roas:18.77},
+  {name:'LS Manual Test',      spend:138.18,imp:18715,ctr:0.97,purchases:20,roas:15.48},
+  {name:'3 Captura',           spend:24.64, imp:2631, ctr:1.18,purchases:3, roas:14.04},
+  {name:'V3 Fish Circus B',    spend:52.66, imp:6153, ctr:6.52,purchases:11,roas:13.82},
+  {name:'V2 Fish Circus C',    spend:13.08, imp:1221, ctr:5.49,purchases:4, roas:12.89},
+  {name:'V3 Fish Circus D',    spend:111.51,imp:12147,ctr:6.91,purchases:24,roas:11.22},
+  {name:'V2 Fish Circus IG',   spend:4.34,  imp:431,  ctr:4.64,purchases:1, roas:10.45},
+  {name:'LS Prospecting',      spend:148.86,imp:16083,ctr:1.82,purchases:16,roas:9.78},
+  {name:'SB Prospecting',      spend:302.03,imp:30473,ctr:7.17,purchases:60,roas:9.77},
+  {name:'2 3era Version',      spend:30.69, imp:3609, ctr:1.83,purchases:4, roas:9.85},
+  {name:'SB Scale 1',          spend:147.38,imp:16940,ctr:6.62,purchases:20,roas:8.58},
+  {name:'V1 Fish Circus B',    spend:25.66, imp:2076, ctr:6.36,purchases:6, roas:7.34},
+  {name:'V3 Fish Circus',      spend:71.39, imp:8230, ctr:7.23,purchases:8, roas:6.89},
+  {name:'V3 Fish Circus C',    spend:102.47,imp:10203,ctr:7.23,purchases:12,roas:6.16},
+  {name:'V1 Fish Circus C',    spend:14.97, imp:1275, ctr:8.63,purchases:2, roas:4.35},
+  {name:'Giveaway Eng flw',    spend:37.98, imp:5632, ctr:0.21,purchases:1, roas:4.47},
+  {name:'5 Producto',          spend:7.48,  imp:724,  ctr:2.35,purchases:1, roas:3.13},
+  {name:'Giveaway Leads',      spend:71.96, imp:9569, ctr:9.26,purchases:4, roas:2.96},
+  {name:'1 Producto',          spend:30.54, imp:3994, ctr:2.08,purchases:1, roas:2.91},
+]
+
+/* ═══════════════════════════════════
+   HELPERS
+   ═══════════════════════════════════ */
+const GC='rgba(255,255,255,0.05)',TC='#555',TS={fill:TC,fontSize:10}
+const TT={contentStyle:{background:'#1a1a1a',border:'0.5px solid #333',borderRadius:6,fontSize:12}}
+
+function rc(r){if(r==null)return'#555';if(r>=10)return'#4caf82';if(r>=5)return'#f0a830';return'#e05a5a'}
+
+function KPI({label,value,sub,sc}){
+  const c=sc==='good'?'#4caf82':sc==='bad'?'#e05a5a':sc==='ac'?'#8d60ca':'#999'
+  return(
+    <div style={{background:'#161616',border:'0.5px solid rgba(255,255,255,0.07)',borderRadius:10,padding:'14px 16px'}}>
+      <div style={{fontSize:10,color:'#555',textTransform:'uppercase',letterSpacing:'.7px',marginBottom:6}}>{label}</div>
+      <div style={{fontSize:22,fontWeight:500,color:'#e0e0e0'}}>{value}</div>
+      {sub&&<div style={{fontSize:11,marginTop:4,color:c}}>{sub}</div>}
+    </div>
+  )
+}
+
+function Card({title,children,mb=14}){
+  return(
+    <div style={{background:'#161616',border:'0.5px solid rgba(255,255,255,0.07)',borderRadius:10,padding:16,marginBottom:mb}}>
+      <div style={{fontSize:11,color:'#999',textTransform:'uppercase',letterSpacing:'.5px',marginBottom:14,fontWeight:500}}>{title}</div>
+      {children}
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════
+   OVERVIEW
+   ═══════════════════════════════════ */
+function Overview(){
+  const {BarChart,Bar,LineChart,Line,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer}=Recharts
+  const t=ACCOUNT
+  return(
+    <div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:20}}>
+        <KPI label="Inversión total"   value={`$${t.spend.toFixed(0)}`}         sub="30 días activos"                         sc="ac"/>
+        <KPI label="ROAS"              value={`${t.roas.toFixed(2)}x`}           sub={`$${t.revenue.toLocaleString()} revenue`} sc="good"/>
+        <KPI label="Compras"           value={t.purchases}                        sub={`CPA: $${(t.spend/t.purchases).toFixed(2)}`}/>
+        <KPI label="CTR"               value={`${t.ctr.toFixed(2)}%`}            sub={`CPC: $${t.cpc.toFixed(3)}`}             sc="good"/>
+        <KPI label="Impresiones"       value={t.impressions.toLocaleString()}     sub={`Clics: ${t.clicks.toLocaleString()}`}/>
+        <KPI label="Add to Cart"       value={t.addToCart.toLocaleString()}       sub={`ATC rate: ${(t.addToCart/t.clicks*100).toFixed(2)}%`}/>
+        <KPI label="Checkouts"         value={t.initiateCheckout.toLocaleString()} sub={`Conv: ${(t.purchases/t.initiateCheckout*100).toFixed(0)}%`} sc="ac"/>
+        <KPI label="Video Views"       value={t.videoViews.toLocaleString()}      sub={`Leads: ${t.leads}`}/>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+        <Card title="Gasto diario ($)" mb={0}>
+          <ResponsiveContainer width="100%" height={160}>
+            <BarChart data={DAILY} margin={{top:4,right:4,bottom:0,left:-10}}>
+              <CartesianGrid stroke={GC} vertical={false}/>
+              <XAxis dataKey="d" tick={TS} interval={3}/><YAxis tick={TS}/>
+              <Tooltip {...TT} formatter={v=>['$'+v.toFixed(2),'Gasto']}/>
+              <Bar dataKey="spend" fill="#8d60ca" radius={[3,3,0,0]}/>
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+        <Card title="Compras diarias" mb={0}>
+          <ResponsiveContainer width="100%" height={160}>
+            <BarChart data={DAILY} margin={{top:4,right:4,bottom:0,left:-10}}>
+              <CartesianGrid stroke={GC} vertical={false}/>
+              <XAxis dataKey="d" tick={TS} interval={3}/><YAxis tick={TS}/>
+              <Tooltip {...TT} formatter={v=>[v,'Compras']}/>
+              <Bar dataKey="purchases" fill="#4caf82" radius={[3,3,0,0]}/>
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+      </div>
+      <div style={{marginTop:14}}>
+        <Card title="CTR diario (%)">
+          <ResponsiveContainer width="100%" height={140}>
+            <LineChart data={DAILY} margin={{top:4,right:4,bottom:0,left:-10}}>
+              <CartesianGrid stroke={GC} vertical={false}/>
+              <XAxis dataKey="d" tick={TS} interval={3}/>
+              <YAxis tick={TS} tickFormatter={v=>v.toFixed(1)+'%'}/>
+              <Tooltip {...TT} formatter={v=>[v.toFixed(2)+'%','CTR']}/>
+              <Line type="monotone" dataKey="ctr" stroke="#8d60ca" strokeWidth={2} dot={{r:2,fill:'#8d60ca'}}/>
+            </LineChart>
+          </ResponsiveContainer>
+        </Card>
+        <Card title="Add to Cart diario">
+          <ResponsiveContainer width="100%" height={120}>
+            <BarChart data={DAILY} margin={{top:4,right:4,bottom:0,left:-10}}>
+              <CartesianGrid stroke={GC} vertical={false}/>
+              <XAxis dataKey="d" tick={TS} interval={3}/><YAxis tick={TS}/>
+              <Tooltip {...TT} formatter={v=>[v,'ATC']}/>
+              <Bar dataKey="atc" fill="#5a3090" radius={[3,3,0,0]}/>
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+      </div>
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════
+   CAMPAIGNS
+   ═══════════════════════════════════ */
+function Campaigns(){
+  const [sk,setSk]=React.useState('spend')
+  const [sd,setSd]=React.useState(-1)
+  const cols=[{k:'name',l:'Campaña'},{k:'status',l:'Estado'},{k:'spend',l:'Gasto'},{k:'imp',l:'Impr.'},{k:'ctr',l:'CTR'},{k:'cpc',l:'CPC'},{k:'purchases',l:'Compras'},{k:'roas',l:'ROAS'}]
+  const sorted=[...CAMPAIGNS].sort((a,b)=>{const av=a[sk]??-Infinity,bv=b[sk]??-Infinity;return typeof av==='string'?av.localeCompare(bv)*sd:(av-bv)*sd})
+  function hs(k){if(k===sk)setSd(d=>d*-1);else{setSk(k);setSd(-1)}}
+  return(
+    <div style={{background:'#161616',border:'0.5px solid rgba(255,255,255,0.07)',borderRadius:10,overflowX:'auto'}}>
+      <table style={{width:'100%',borderCollapse:'collapse',fontSize:12,whiteSpace:'nowrap'}}>
+        <thead><tr>{cols.map(c=>(
+          <th key={c.k} onClick={()=>hs(c.k)} style={{textAlign:'left',padding:'10px 12px',color:'#555',fontWeight:400,fontSize:11,textTransform:'uppercase',letterSpacing:'.4px',borderBottom:'0.5px solid rgba(255,255,255,0.07)',cursor:'pointer',userSelect:'none'}}>
+            {c.l} <span style={{opacity:.4}}>{sk===c.k?(sd===1?'↑':'↓'):'↕'}</span>
+          </th>
+        ))}</tr></thead>
+        <tbody>{sorted.map((c,i)=>(
+          <tr key={i}>
+            <td style={{padding:'10px 12px',borderBottom:'0.5px solid rgba(255,255,255,0.04)',color:'#e0e0e0',maxWidth:200,overflow:'hidden',textOverflow:'ellipsis'}}>{c.name}</td>
+            <td style={{padding:'10px 12px',borderBottom:'0.5px solid rgba(255,255,255,0.04)'}}><span style={c.status==='ACTIVE'?{background:'rgba(76,175,130,0.15)',color:'#4caf82',borderRadius:4,padding:'2px 8px',fontSize:11,fontWeight:500}:{background:'#1a1a1a',color:'#555',borderRadius:4,padding:'2px 8px',fontSize:11}}>{c.status==='ACTIVE'?'Activo':'Pausado'}</span></td>
+            {['spend','imp','ctr','cpc','purchases'].map(k=>(
+              <td key={k} style={{padding:'10px 12px',borderBottom:'0.5px solid rgba(255,255,255,0.04)',color:'#999'}}>
+                {k==='spend'?'$'+c[k].toFixed(0):k==='imp'?c[k].toLocaleString():k==='ctr'?c[k].toFixed(2)+'%':k==='cpc'?'$'+c[k].toFixed(3):c[k]}
+              </td>
+            ))}
+            <td style={{padding:'10px 12px',borderBottom:'0.5px solid rgba(255,255,255,0.04)',color:rc(c.roas),fontWeight:500}}>{c.roas!=null?c.roas.toFixed(2)+'x':'—'}</td>
+          </tr>
+        ))}</tbody>
+      </table>
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════
+   ANALYTICS
+   ═══════════════════════════════════ */
+function Analytics(){
+  const {BarChart,Bar,LineChart,Line,PieChart,Pie,Cell,XAxis,YAxis,CartesianGrid,Tooltip,Legend,ResponsiveContainer}=Recharts
+  const funnel=[
+    {label:'Impresiones',  val:ACCOUNT.impressions},
+    {label:'Clics',        val:ACCOUNT.clicks},
+    {label:'Landing PV',   val:ACCOUNT.landingPageViews},
+    {label:'View Content', val:ACCOUNT.viewContent},
+    {label:'Add to Cart',  val:ACCOUNT.addToCart},
+    {label:'Init Checkout',val:ACCOUNT.initiateCheckout},
+    {label:'Compras',      val:ACCOUNT.purchases},
+  ]
+  const maxF=funnel[0].val
+  const PC=['#8d60ca','#7a4fb0','#6a40a0','#5a3090','#444','#555','#333']
+  const roasData=[...CAMPAIGNS].filter(c=>c.roas!=null).sort((a,b)=>b.roas-a.roas)
+  return(
+    <div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+        <Card title="ROAS por campaña" mb={0}>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={roasData} layout="vertical" margin={{top:4,right:16,bottom:0,left:4}}>
+              <CartesianGrid stroke={GC} horizontal={false}/>
+              <XAxis type="number" tick={TS} tickFormatter={v=>v+'x'}/>
+              <YAxis type="category" dataKey="name" tick={{...TS,fontSize:9}} width={130} tickFormatter={n=>n.length>16?n.slice(0,16)+'…':n}/>
+              <Tooltip {...TT} formatter={v=>[v.toFixed(2)+'x','ROAS']}/>
+              <Bar dataKey="roas" fill="#8d60ca" radius={[0,4,4,0]}/>
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+        <Card title="Distribución del gasto" mb={0}>
+          <ResponsiveContainer width="100%" height={220}>
+            <PieChart>
+              <Pie data={CAMPAIGNS} dataKey="spend" cx="50%" cy="50%" outerRadius={80} innerRadius={40}>
+                {CAMPAIGNS.map((_,i)=><Cell key={i} fill={PC[i]??'#333'}/>)}
+              </Pie>
+              <Tooltip {...TT} formatter={(v,n)=>['$'+v.toFixed(0),n]}/>
+              <Legend iconType="square" iconSize={8} wrapperStyle={{fontSize:10,color:'#888'}}/>
+            </PieChart>
+          </ResponsiveContainer>
+        </Card>
+      </div>
+      <div style={{marginTop:14}}>
+        <Card title="Embudo de conversión (30 días)">
+          {funnel.map((f,i)=>{
+            const pct=(f.val/maxF*100).toFixed(1)
+            const prev=i>0?funnel[i-1].val:f.val
+            const drop=i>0?((1-f.val/prev)*100).toFixed(0):null
+            return(
+              <div key={f.label} style={{display:'flex',alignItems:'center',gap:10,marginBottom:10}}>
+                <div style={{fontSize:12,color:'#999',width:130,flexShrink:0}}>{f.label}</div>
+                <div style={{flex:1,background:'#1a1a1a',borderRadius:3,height:18,overflow:'hidden'}}>
+                  <div style={{height:'100%',background:'#8d60ca',borderRadius:3,width:pct+'%'}}/>
+                </div>
+                <div style={{fontSize:12,color:'#e0e0e0',minWidth:60,textAlign:'right'}}>{f.val.toLocaleString()}</div>
+                {drop&&<div style={{fontSize:11,color:'#e05a5a',minWidth:40,textAlign:'right'}}>-{drop}%</div>}
+              </div>
+            )
+          })}
+        </Card>
+        <Card title="CTR vs CPC por día">
+          <ResponsiveContainer width="100%" height={170}>
+            <LineChart data={DAILY} margin={{top:4,right:16,bottom:0,left:-10}}>
+              <CartesianGrid stroke={GC} vertical={false}/>
+              <XAxis dataKey="d" tick={TS} interval={3}/>
+              <YAxis yAxisId="l" tick={TS} tickFormatter={v=>v.toFixed(1)+'%'}/>
+              <YAxis yAxisId="r" orientation="right" tick={TS} tickFormatter={v=>'$'+v.toFixed(2)}/>
+              <Tooltip {...TT} formatter={(v,n)=>n==='CTR'?[v.toFixed(2)+'%','CTR']:['$'+v.toFixed(3),'CPC']}/>
+              <Legend iconType="square" iconSize={8} wrapperStyle={{fontSize:11,color:'#888'}}/>
+              <Line yAxisId="l" type="monotone" dataKey="ctr" name="CTR" stroke="#8d60ca" strokeWidth={2} dot={false}/>
+              <Line yAxisId="r" type="monotone" dataKey="cpc" name="CPC" stroke="#4caf82" strokeWidth={2} dot={false} strokeDasharray="4 2"/>
+            </LineChart>
+          </ResponsiveContainer>
+        </Card>
+      </div>
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════
+   CREATIVES
+   ═══════════════════════════════════ */
+function Creatives(){
+  const [sk,setSk]=React.useState('roas')
+  const [onlyR,setOR]=React.useState(false)
+  let list=[...ADS]
+  if(onlyR)list=list.filter(a=>a.roas!=null)
+  list.sort((a,b)=>(b[sk]??-1)-(a[sk]??-1))
+  const mr=Math.max(...ADS.filter(a=>a.roas).map(a=>a.roas))
+  const bs=(a)=>({background:a?'rgba(141,96,202,0.13)':'#161616',border:a?'0.5px solid #8d60ca':'0.5px solid rgba(255,255,255,0.07)',borderRadius:6,padding:'5px 10px',fontSize:12,color:a?'#8d60ca':'#999',cursor:'pointer'})
+  return(
+    <div>
+      <div style={{display:'flex',gap:8,flexWrap:'wrap',marginBottom:16}}>
+        {['roas','spend','ctr','purchases','imp'].map(k=>(
+          <button key={k} style={bs(sk===k)} onClick={()=>setSk(k)}>{k==='imp'?'Impr.':k.charAt(0).toUpperCase()+k.slice(1)}</button>
+        ))}
+        <button style={bs(onlyR)} onClick={()=>setOR(r=>!r)}>Solo con ROAS</button>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12}}>
+        {list.map((ad,i)=>(
+          <div key={i} style={{background:'#161616',border:'0.5px solid rgba(255,255,255,0.07)',borderRadius:10,padding:14}}>
+            <div style={{fontSize:12,fontWeight:500,color:'#e0e0e0',marginBottom:10,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}} title={ad.name}>{ad.name}</div>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:6,marginBottom:10}}>
+              {[['Gasto','$'+ad.spend.toFixed(0)],['Impr.',ad.imp.toLocaleString()],['CTR',ad.ctr.toFixed(2)+'%'],['Compras',ad.purchases]].map(([l,v])=>(
+                <div key={l}><div style={{fontSize:10,color:'#555'}}>{l}</div><div style={{fontSize:12,color:'#aaa',fontWeight:500}}>{v}</div></div>
+              ))}
+            </div>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:5}}>
+              <span style={{fontSize:11,color:'#555'}}>ROAS</span>
+              <span style={{fontSize:14,fontWeight:500,color:rc(ad.roas)}}>{ad.roas!=null?ad.roas.toFixed(2)+'x':'—'}</span>
+            </div>
+            <div style={{background:'#222',borderRadius:2,height:3,overflow:'hidden'}}>
+              <div style={{height:'100%',background:rc(ad.roas),borderRadius:2,width:ad.roas?`${(ad.roas/mr*100).toFixed(1)}%`:'0%'}}/>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════
+   BUDGET
+   ═══════════════════════════════════ */
+function Budget(){
+  const {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer}=Recharts
+  const pac=[
+    {name:'SB Scale 1',          spend:147.38,status:'ACTIVE'},
+    {name:'Live Series Prospect',spend:148.86,status:'ACTIVE'},
+    {name:'SB Prospecting',      spend:302.03,status:'ACTIVE'},
+    {name:'Giveaway Leads',      spend:71.96, status:'PAUSED'},
+    {name:'Giveaway Eng (no flw)',spend:98.92,status:'PAUSED'},
+    {name:'Giveaway Eng (flw)',  spend:37.98, status:'PAUSED'},
+    {name:'LS Manual Test',      spend:138.18,status:'PAUSED'},
+  ]
+  const mx=Math.max(...pac.map(p=>p.spend))
+  const spd=DAILY.filter(d=>d.spend>0).length
+  return(
+    <div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12,marginBottom:20}}>
+        <KPI label="Total gastado"      value={`$${ACCOUNT.spend.toFixed(0)}`}         sub="30 días" sc="ac"/>
+        <KPI label="Gasto diario prom." value={`$${(ACCOUNT.spend/spd).toFixed(2)}`}   sub={`${spd} días con gasto`}/>
+        <KPI label="Revenue generado"   value={`$${ACCOUNT.revenue.toLocaleString()}`} sub={`ROAS: ${ACCOUNT.roas.toFixed(2)}x`} sc="good"/>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12,marginBottom:20}}>
+        {pac.map((p,i)=>(
+          <div key={i} style={{background:'#161616',border:'0.5px solid rgba(255,255,255,0.07)',borderRadius:10,padding:14}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:4,gap:8}}>
+              <span style={{fontSize:11,color:'#999',flex:1,lineHeight:1.4}}>{p.name}</span>
+              <span style={p.status==='ACTIVE'?{background:'rgba(76,175,130,0.15)',color:'#4caf82',borderRadius:4,padding:'2px 8px',fontSize:11,fontWeight:500}:{background:'#1a1a1a',color:'#555',borderRadius:4,padding:'2px 8px',fontSize:11}}>{p.status==='ACTIVE'?'Activo':'Pausado'}</span>
+            </div>
+            <div style={{fontSize:22,fontWeight:500,color:'#e0e0e0',marginBottom:8}}>${p.spend.toFixed(0)}</div>
+            <div style={{background:'#222',borderRadius:3,height:6,overflow:'hidden',marginBottom:6}}>
+              <div style={{height:'100%',borderRadius:3,background:p.status==='ACTIVE'?'#8d60ca':'#444',width:`${(p.spend/mx*100).toFixed(1)}%`}}/>
+            </div>
+            <div style={{fontSize:10,color:'#555'}}>{p.status==='ACTIVE'?'Campaña activa':'Campaña pausada'}</div>
+          </div>
+        ))}
+      </div>
+      <Card title="Gasto acumulado por campaña">
+        <ResponsiveContainer width="100%" height={240}>
+          <BarChart data={[...pac].sort((a,b)=>b.spend-a.spend)} layout="vertical" margin={{top:4,right:16,bottom:0,left:4}}>
+            <CartesianGrid stroke={GC} horizontal={false}/>
+            <XAxis type="number" tick={TS} tickFormatter={v=>'$'+v}/>
+            <YAxis type="category" dataKey="name" tick={{...TS,fontSize:10}} width={160}/>
+            <Tooltip {...TT} formatter={v=>['$'+v,'Gasto']}/>
+            <Bar dataKey="spend" fill="#8d60ca" radius={[0,4,4,0]}/>
+          </BarChart>
+        </ResponsiveContainer>
+      </Card>
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════
+   APP
+   ═══════════════════════════════════ */
+const SECS=[{id:'overview',l:'Vista General'},{id:'campaigns',l:'Campañas'},{id:'analytics',l:'Analítica'},{id:'creatives',l:'Creatividades'},{id:'budget',l:'Presupuesto'}]
+
+function App(){
+  const [active,setActive]=React.useState('overview')
+  const label=SECS.find(s=>s.id===active)?.l
+  const views={overview:<Overview/>,campaigns:<Campaigns/>,analytics:<Analytics/>,creatives:<Creatives/>,budget:<Budget/>}
+  return(
+    <div style={{display:'flex',minHeight:'100vh'}}>
+      <nav style={{width:210,minWidth:210,background:'#111',borderRight:'0.5px solid rgba(255,255,255,0.07)',display:'flex',flexDirection:'column',padding:'20px 0 16px'}}>
+        <div style={{display:'flex',alignItems:'center',gap:10,padding:'0 16px 4px'}}>
+          <div style={{width:28,height:28,background:'#8d60ca',borderRadius:6,display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,fontWeight:700,color:'#fff',flexShrink:0}}>J</div>
+          <span style={{fontSize:11,fontWeight:600,color:'#8d60ca',letterSpacing:'.8px',textTransform:'uppercase'}}>JYG Pro Fishing</span>
+        </div>
+        <div style={{fontSize:11,color:'#555',padding:'2px 16px 20px'}}>Meta Ads Dashboard</div>
+        <ul style={{listStyle:'none',flex:1}}>
+          {SECS.map(s=>(
+            <li key={s.id}>
+              <button onClick={()=>setActive(s.id)} style={{display:'flex',alignItems:'center',gap:9,width:'100%',padding:'10px 16px',background:'none',border:'none',borderLeft:active===s.id?'2px solid #8d60ca':'2px solid transparent',color:active===s.id?'#8d60ca':'#999',fontSize:13,cursor:'pointer',textAlign:'left',backgroundColor:active===s.id?'rgba(141,96,202,0.13)':'transparent'}}>
+                <span style={{width:6,height:6,borderRadius:'50%',background:'currentColor',opacity:.6,flexShrink:0}}/>
+                {s.l}
+              </button>
+            </li>
+          ))}
+        </ul>
+        <div style={{padding:'16px 16px 0',borderTop:'0.5px solid rgba(255,255,255,0.07)',marginTop:8}}>
+          <div style={{fontSize:10,color:'#555',textTransform:'uppercase',letterSpacing:'.5px',marginBottom:3}}>Periodo</div>
+          <div style={{fontSize:11,color:'#888'}}>26 Mar – 24 Apr 2026</div>
+        </div>
+      </nav>
+      <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
+        <header style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'14px 24px',background:'#111',borderBottom:'0.5px solid rgba(255,255,255,0.07)',flexShrink:0}}>
+          <span style={{fontSize:15,fontWeight:500,color:'#e0e0e0'}}>{label}</span>
+          <span style={{background:'#1a1a1a',border:'0.5px solid rgba(255,255,255,0.13)',borderRadius:6,padding:'5px 10px',fontSize:12,color:'#999'}}>26 Mar – 24 Apr 2026 · 30 días</span>
+        </header>
+        <div style={{flex:1,overflowY:'auto',padding:24}}>
+          {views[active]}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>)
+
+</script>
+</body>
+</html>
